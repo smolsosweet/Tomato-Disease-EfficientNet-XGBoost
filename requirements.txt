@@ -3,6 +3,7 @@ gunicorn
 torch>=2.0
 torchvision
 xgboost
+scikit-learn
 Pillow
 numpy
 opencv-python-headless
