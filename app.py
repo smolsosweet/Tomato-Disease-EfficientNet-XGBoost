@@ -103,7 +103,8 @@ def predict_canvas():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    print("🚀 Ứng dụng chạy tại: http://localhost:5000")
-    print("⚠️  Mở trình duyệt: http://localhost:5000")
-    print("💡 Hỗ trợ HTTPS: Sử dụng localhost hoặc 127.0.0.1")
-    app.run(host='localhost', port=5000, debug=False, threaded=True)
+    import os
+    # Lấy port từ môi trường của server, nếu không có thì dùng 5000
+    port = int(os.environ.get("PORT", 5000))
+    # host='0.0.0.0' giúp server có thể nhận request từ bên ngoài
+    app.run(host='0.0.0.0', port=port, debug=False)
