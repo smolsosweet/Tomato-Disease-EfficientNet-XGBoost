@@ -1,7 +1,8 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.1.0+cpu
+torchvision==0.16.0+cpu
 Flask
 gunicorn
-torch>=2.0
-torchvision
 xgboost
 scikit-learn
 Pillow
