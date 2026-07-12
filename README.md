@@ -15,6 +15,10 @@ A robust web application for diagnosing tomato leaf diseases using a **Hybrid En
 * **Vietnamese Localization:** Full support for Vietnamese disease names (e.g., *Early Blight* $\rightarrow$ *Bệnh mốc sớm*).
 * **Confidence Scoring:** Displays Top-3 probable diseases with confidence percentages.
 
+## 📸 Screenshots
+*(Bạn hãy chụp 1-2 bức ảnh giao diện trang web khi đang dự đoán và chèn link ảnh vào đây nhé)*
+<!-- ![Demo Image](link-anh-demo-cua-ban) -->
+
 ## 🧠 Model Pipeline (How it works)
 
 The system moves beyond standard Softmax classification by using a two-stage pipeline:
@@ -25,3 +29,47 @@ graph LR
     B -->|Feature Extraction| C[High-Dim Feature Vector]
     C -->|Input| D{XGBoost Classifier}
     D -->|Prediction| E[Disease Class & Probability]
+```
+
+## 🛠️ Installation & Setup
+
+Follow these steps to run the project locally on your machine:
+
+**1. Clone the repository**
+```bash
+git clone https://github.com/smolsosweet/Tomato-Disease-EfficientNet-XGBoost.git
+cd Tomato-Disease-EfficientNet-XGBoost
+```
+
+**2. Create a Virtual Environment (Recommended)**
+```bash
+python -m venv venv
+# On Windows:
+venv\Scripts\activate
+# On macOS/Linux:
+source venv/bin/activate
+```
+
+**3. Install Dependencies**
+```bash
+pip install -r requirements.txt
+```
+
+## 💻 Usage
+
+Start the Flask web server by running:
+```bash
+python app.py
+```
+Then, open your web browser and navigate to: `http://127.0.0.1:5000`
+
+## 📁 Project Structure
+
+```text
+├── model/                  # Contains pre-trained weights (EfficientNet & XGBoost)
+├── templates/              # HTML Frontend files
+├── app.py                  # Flask Web Server entry point
+├── predict.py              # ML Pipeline and prediction logic
+├── requirements.txt        # Python dependencies
+└── README.md               # Project documentation
+```
