@@ -16,8 +16,7 @@ A robust web application for diagnosing tomato leaf diseases using a **Hybrid En
 * **Confidence Scoring:** Displays Top-3 probable diseases with confidence percentages.
 
 ## 📸 Screenshots
-*(Bạn hãy chụp 1-2 bức ảnh giao diện trang web khi đang dự đoán và chèn link ảnh vào đây nhé)*
-<!-- ![Demo Image](link-anh-demo-cua-ban) -->
+<!-- Add your application screenshots here -->
 
 ## 🧠 Model Pipeline (How it works)
 
