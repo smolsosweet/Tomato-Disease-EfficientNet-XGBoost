@@ -10,17 +10,19 @@ app = Flask(__name__)
 # Load model 1 lần
 model = load_model("model")
 
-# Mapping tên bệnh sang tiếng Việt
+# Mapping chính xác 100% với class_mapping.json của mô hình
 disease_map = {
+    "Bacterial_spot": "Bệnh đốm vi khuẩn",
     "Early_blight": "Bệnh mốc sớm",
     "Late_blight": "Bệnh mốc muộn",
     "Leaf_Mold": "Bệnh mốc lá",
     "Septoria_leaf_spot": "Đốm lá Septoria",
-    "Spider_mites": "Nhện đỏ",
+    "Spider_mites Two-spotted_spider_mite": "Nhện đỏ",
     "Target_Spot": "Đốm mục tiêu",
-    "Yellow_Leaf_Curl_Virus": "Virus xoăn lá vàng",
-    "Mosaic_virus": "Virus khảm",
-    "Healthy": "Khỏe mạnh"
+    "Tomato_Yellow_Leaf_Curl_Virus": "Virus xoăn lá vàng",
+    "Tomato_mosaic_virus": "Virus khảm",
+    "powdery_mildew": "Bệnh phấn trắng",
+    "healthy": "Khỏe mạnh"
 }
 
 @app.route("/", methods=["GET"])
