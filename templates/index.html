@@ -231,11 +231,50 @@
         padding: 20px;
       }
     }
+    /* Scrollbar for history */
+    #historyList::-webkit-scrollbar { width: 6px; }
+    #historyList::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+    .history-item {
+      display: flex;
+      align-items: center;
+      background: #f8f9ff;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-left: 4px solid #667eea;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .history-item:hover {
+      background: #e8ebff;
+      transform: translateX(-3px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .history-img {
+      width: 50px;
+      height: 50px;
+      border-radius: 6px;
+      object-fit: cover;
+      margin-right: 12px;
+    }
+    .history-info h6 {
+      margin: 0;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .history-info p {
+      margin: 0;
+      font-size: 12px;
+      color: #6c757d;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1 class="text-center">🍅 Nhận diện bệnh lá cà chua</h1>
+    <div class="row">
+      <div class="col-lg-8">
+        <h1 class="text-center">🍅 Nhận diện bệnh lá cà chua</h1>
     <p class="subtitle text-center">AI tự động dự đoán bệnh từ ảnh lá cà chua của bạn</p>
 
     <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -337,6 +376,20 @@
         </div>
 
         <canvas id="cameraCanvas" style="display: none;"></canvas>
+      </div>
+    </div>
+      </div>
+      <!-- History Sidebar -->
+      <div class="col-lg-4 mt-5 mt-lg-0">
+        <div class="history-sidebar h-100 ps-lg-4" style="border-left: 2px dashed #e2e8f0;">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 style="color: #764ba2; font-weight: bold; margin:0;">🕒 Lịch sử quét</h4>
+            <button class="btn btn-sm btn-outline-danger" onclick="clearHistory()">Xóa tất cả</button>
+          </div>
+          <div id="historyList" style="max-height: 600px; overflow-y: auto; padding-right: 10px;">
+            <!-- JS will render here -->
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -591,7 +644,86 @@
         document.getElementById('cameraTopPredictions').innerHTML = html;
         document.getElementById('cameraResultSection').style.display = 'block';
       }
+
+      // Save history
+      const imgSrc = type === 'upload' 
+        ? document.getElementById('previewImg').src 
+        : document.getElementById('capturedImage').src;
+      saveToHistory(imgSrc, data.predicted_class_vi, conf, isHealthy);
     }
+
+    // ===== HISTORY SECTION =====
+    function saveToHistory(imageData, disease, conf, isHealthy) {
+      const img = new Image();
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const maxSize = 100;
+        let width = img.width;
+        let height = img.height;
+        if (width > height) {
+          if (width > maxSize) {
+            height *= maxSize / width;
+            width = maxSize;
+          }
+        } else {
+          if (height > maxSize) {
+            width *= maxSize / height;
+            height = maxSize;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+        const thumbData = canvas.toDataURL('image/jpeg', 0.8);
+
+        const history = JSON.parse(localStorage.getItem('tomatoHistory') || '[]');
+        history.unshift({
+          id: Date.now(),
+          image: thumbData,
+          disease: disease,
+          conf: conf,
+          healthy: isHealthy,
+          time: new Date().toLocaleString('vi-VN')
+        });
+        if (history.length > 20) history.pop();
+        localStorage.setItem('tomatoHistory', JSON.stringify(history));
+        renderHistory();
+      };
+      img.src = imageData;
+    }
+
+    function renderHistory() {
+      const history = JSON.parse(localStorage.getItem('tomatoHistory') || '[]');
+      const listEl = document.getElementById('historyList');
+      if (history.length === 0) {
+        listEl.innerHTML = '<p class="text-center text-muted mt-4" style="font-size: 14px;">Chưa có lịch sử quét nào.</p>';
+        return;
+      }
+      let html = '';
+      history.forEach(item => {
+        const color = item.healthy ? '#059669' : '#dc2626';
+        html += `
+          <div class="history-item" style="border-left-color: ${color}">
+            <img src="${item.image}" class="history-img" alt="Thumb">
+            <div class="history-info">
+              <h6 style="color: ${color}">${item.disease} (${item.conf}%)</h6>
+              <p>${item.time}</p>
+            </div>
+          </div>
+        `;
+      });
+      listEl.innerHTML = html;
+    }
+
+    function clearHistory() {
+      if(confirm('Bạn có chắc muốn xóa toàn bộ lịch sử?')) {
+        localStorage.removeItem('tomatoHistory');
+        renderHistory();
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', renderHistory);
   </script>
 </body>
 </html>
