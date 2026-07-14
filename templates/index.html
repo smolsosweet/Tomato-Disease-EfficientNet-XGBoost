@@ -277,7 +277,7 @@
               </div>
             </div>
             <div class="treatment-box" id="treatmentBox" style="display: none;">
-              <h5 style="color: #d97706; font-weight: 700; margin-bottom: 10px; font-size: 16px;">💡 Cách xử lý:</h5>
+              <h5 id="treatmentTitle" style="color: #d97706; font-weight: 700; margin-bottom: 10px; font-size: 16px;">💡 Cách xử lý:</h5>
               <p id="treatmentText" style="margin-bottom: 0; color: #4b5563; font-size: 15px; line-height: 1.5;"></p>
             </div>
             <div class="top-predictions">
@@ -321,7 +321,7 @@
                   </div>
                 </div>
                 <div class="treatment-box" id="cameraTreatmentBox" style="display: none;">
-                  <h5 style="color: #d97706; font-weight: 700; margin-bottom: 10px; font-size: 16px;">💡 Cách xử lý:</h5>
+                  <h5 id="cameraTreatmentTitle" style="color: #d97706; font-weight: 700; margin-bottom: 10px; font-size: 16px;">💡 Cách xử lý:</h5>
                   <p id="cameraTreatmentText" style="margin-bottom: 0; color: #4b5563; font-size: 15px; line-height: 1.5;"></p>
                 </div>
                 <div class="top-predictions">
@@ -524,15 +524,31 @@
     // ===== DISPLAY RESULT =====
     function displayResult(data, type) {
       const conf = Math.round(data.confidence);
+      const isHealthy = data.predicted_class === 'healthy';
+      
+      const colorText = isHealthy ? '#059669' : '#dc2626';
+      const colorGradient = isHealthy ? 'linear-gradient(90deg, #34d399 0%, #059669 100%)' : 'linear-gradient(90deg, #f87171 0%, #dc2626 100%)';
+      const boxBg = isHealthy ? '#ecfdf5' : '#fef2f2';
+      const boxBorder = isHealthy ? '#10b981' : '#ef4444';
+      const boxTitleColor = isHealthy ? '#047857' : '#b91c1c';
+      const boxTitleIcon = isHealthy ? '✅' : '💡';
+      const boxTitleText = isHealthy ? ' Tình trạng:' : ' Cách xử lý:';
       
       if (type === 'upload') {
         document.getElementById('diseaseName').textContent = data.predicted_class_vi;
+        document.getElementById('diseaseName').style.color = colorText;
+        
         document.getElementById('confidenceText').textContent = `Độ tin cậy: ${conf}%`;
         document.getElementById('confidenceBar').style.width = conf + '%';
         document.getElementById('confidenceBar').textContent = conf + '%';
+        document.getElementById('confidenceBar').style.background = colorGradient;
 
         document.getElementById('treatmentText').textContent = data.treatment;
         document.getElementById('treatmentBox').style.display = 'block';
+        document.getElementById('treatmentBox').style.background = boxBg;
+        document.getElementById('treatmentBox').style.borderLeftColor = boxBorder;
+        document.getElementById('treatmentTitle').style.color = boxTitleColor;
+        document.getElementById('treatmentTitle').textContent = boxTitleIcon + boxTitleText;
 
         let html = '';
         data.top3.forEach((item, idx) => {
@@ -548,12 +564,19 @@
         previewSection.style.display = 'grid';
       } else {
         document.getElementById('cameraDiseaseeName').textContent = data.predicted_class_vi;
+        document.getElementById('cameraDiseaseeName').style.color = colorText;
+        
         document.getElementById('cameraConfidenceText').textContent = `Độ tin cậy: ${conf}%`;
         document.getElementById('cameraConfidenceBar').style.width = conf + '%';
         document.getElementById('cameraConfidenceBar').textContent = conf + '%';
+        document.getElementById('cameraConfidenceBar').style.background = colorGradient;
 
         document.getElementById('cameraTreatmentText').textContent = data.treatment;
         document.getElementById('cameraTreatmentBox').style.display = 'block';
+        document.getElementById('cameraTreatmentBox').style.background = boxBg;
+        document.getElementById('cameraTreatmentBox').style.borderLeftColor = boxBorder;
+        document.getElementById('cameraTreatmentTitle').style.color = boxTitleColor;
+        document.getElementById('cameraTreatmentTitle').textContent = boxTitleIcon + boxTitleText;
 
         let html = '';
         data.top3.forEach((item, idx) => {
