@@ -117,6 +117,13 @@
       font-weight: 600;
       font-size: 14px;
     }
+    .treatment-box {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
     .top-predictions {
       margin-top: 30px;
     }
@@ -269,6 +276,10 @@
                 <div class="progress-bar" id="confidenceBar" role="progressbar"></div>
               </div>
             </div>
+            <div class="treatment-box" id="treatmentBox" style="display: none;">
+              <h5 style="color: #d97706; font-weight: 700; margin-bottom: 10px; font-size: 16px;">💡 Cách xử lý:</h5>
+              <p id="treatmentText" style="margin-bottom: 0; color: #4b5563; font-size: 15px; line-height: 1.5;"></p>
+            </div>
             <div class="top-predictions">
               <h5>Top 3 khả năng:</h5>
               <div id="topPredictions"></div>
@@ -308,6 +319,10 @@
                   <div class="progress mt-2">
                     <div class="progress-bar" id="cameraConfidenceBar" role="progressbar"></div>
                   </div>
+                </div>
+                <div class="treatment-box" id="cameraTreatmentBox" style="display: none;">
+                  <h5 style="color: #d97706; font-weight: 700; margin-bottom: 10px; font-size: 16px;">💡 Cách xử lý:</h5>
+                  <p id="cameraTreatmentText" style="margin-bottom: 0; color: #4b5563; font-size: 15px; line-height: 1.5;"></p>
                 </div>
                 <div class="top-predictions">
                   <h5>Top 3 khả năng:</h5>
@@ -516,6 +531,9 @@
         document.getElementById('confidenceBar').style.width = conf + '%';
         document.getElementById('confidenceBar').textContent = conf + '%';
 
+        document.getElementById('treatmentText').textContent = data.treatment;
+        document.getElementById('treatmentBox').style.display = 'block';
+
         let html = '';
         data.top3.forEach((item, idx) => {
           const prob = Math.round(item[1] * 100);
@@ -533,6 +551,9 @@
         document.getElementById('cameraConfidenceText').textContent = `Độ tin cậy: ${conf}%`;
         document.getElementById('cameraConfidenceBar').style.width = conf + '%';
         document.getElementById('cameraConfidenceBar').textContent = conf + '%';
+
+        document.getElementById('cameraTreatmentText').textContent = data.treatment;
+        document.getElementById('cameraTreatmentBox').style.display = 'block';
 
         let html = '';
         data.top3.forEach((item, idx) => {

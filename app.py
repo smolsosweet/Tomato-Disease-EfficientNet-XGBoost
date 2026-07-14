@@ -25,6 +25,21 @@ disease_map = {
     "healthy": "Khỏe mạnh"
 }
 
+# Phác đồ điều trị
+treatment_map = {
+    "Bacterial_spot": "Cắt bỏ lá bệnh, phun thuốc gốc đồng (Copper), tránh tưới nước lên lá.",
+    "Early_blight": "Tỉa bỏ lá bệnh, phun thuốc diệt nấm chứa Mancozeb hoặc Copper, luân canh cây trồng.",
+    "Late_blight": "Tiêu hủy cây bệnh nặng, phun thuốc diệt nấm Metalaxyl hoặc Mancozeb.",
+    "Leaf_Mold": "Tăng cường thông gió, giảm độ ẩm, phun thuốc diệt nấm Chlorothalonil.",
+    "Septoria_leaf_spot": "Loại bỏ lá úa, phun thuốc gốc đồng hoặc Chlorothalonil, tránh làm ướt lá khi tưới.",
+    "Spider_mites Two-spotted_spider_mite": "Phun thuốc trị nhện đặc trị (Abamectin, Propargite), giữ vườn thông thoáng, tránh để cây bị khô hạn.",
+    "Target_Spot": "Phun thuốc diệt nấm chứa Mancozeb hoặc Azoxystrobin, dọn sạch tàn dư thực vật.",
+    "Tomato_Yellow_Leaf_Curl_Virus": "Nhổ bỏ cây bệnh, tiêu diệt bọ phấn trắng (vật trung gian truyền bệnh) bằng thuốc trừ sâu.",
+    "Tomato_mosaic_virus": "Nhổ bỏ và tiêu hủy cây bệnh, rửa tay sạch sau khi tiếp xúc với cây bệnh, sát trùng dụng cụ.",
+    "powdery_mildew": "Phun thuốc gốc lưu huỳnh hoặc thuốc trừ nấm (Difenoconazole), cắt tỉa bớt lá để vườn thông thoáng.",
+    "healthy": "Cây phát triển tốt, không có dấu hiệu bệnh. Tiếp tục duy trì chế độ chăm sóc hiện tại."
+}
+
 @app.route("/", methods=["GET"])
 def index():
     return render_template("index.html")
@@ -48,6 +63,12 @@ def predict():
         result['predicted_class_vi'] = disease_map.get(
             result['predicted_class'], 
             result['predicted_class']
+        )
+        
+        # Thêm phác đồ điều trị
+        result['treatment'] = treatment_map.get(
+            result['predicted_class'],
+            "Chưa có thông tin cách xử lý."
         )
         
         # Top 3
@@ -85,6 +106,12 @@ def predict_canvas():
         result['predicted_class_vi'] = disease_map.get(
             result['predicted_class'], 
             result['predicted_class']
+        )
+        
+        # Thêm phác đồ điều trị
+        result['treatment'] = treatment_map.get(
+            result['predicted_class'],
+            "Chưa có thông tin cách xử lý."
         )
         
         # Top 3
