@@ -649,16 +649,16 @@
       const imgSrc = type === 'upload' 
         ? document.getElementById('previewImg').src 
         : document.getElementById('capturedImage').src;
-      saveToHistory(imgSrc, data.predicted_class_vi, conf, isHealthy);
+      saveToHistory(imgSrc, data);
     }
 
     // ===== HISTORY SECTION =====
-    function saveToHistory(imageData, disease, conf, isHealthy) {
+    function saveToHistory(imageData, data) {
       const img = new Image();
       img.onload = function() {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-        const maxSize = 100;
+        const maxSize = 300;
         let width = img.width;
         let height = img.height;
         if (width > height) {
@@ -681,9 +681,11 @@
         history.unshift({
           id: Date.now(),
           image: thumbData,
-          disease: disease,
-          conf: conf,
-          healthy: isHealthy,
+          disease: data.predicted_class_vi,
+          conf: Math.round(data.confidence),
+          healthy: data.predicted_class === 'healthy',
+          treatment: data.treatment,
+          top3: data.top3,
           time: new Date().toLocaleString('vi-VN')
         });
         if (history.length > 20) history.pop();
@@ -704,7 +706,7 @@
       history.forEach(item => {
         const color = item.healthy ? '#059669' : '#dc2626';
         html += `
-          <div class="history-item" style="border-left-color: ${color}">
+          <div class="history-item" style="border-left-color: ${color}" onclick="viewHistory(${item.id})">
             <img src="${item.image}" class="history-img" alt="Thumb">
             <div class="history-info">
               <h6 style="color: ${color}">${item.disease} (${item.conf}%)</h6>
@@ -721,6 +723,59 @@
         localStorage.removeItem('tomatoHistory');
         renderHistory();
       }
+    }
+
+    function viewHistory(id) {
+      const history = JSON.parse(localStorage.getItem('tomatoHistory') || '[]');
+      const item = history.find(x => x.id === id);
+      if (!item) return;
+
+      document.getElementById('upload-tab').click();
+      document.getElementById('previewSection').style.display = 'grid';
+      document.getElementById('previewImg').src = item.image;
+
+      const colorText = item.healthy ? '#059669' : '#dc2626';
+      const colorGradient = item.healthy ? 'linear-gradient(90deg, #34d399 0%, #059669 100%)' : 'linear-gradient(90deg, #f87171 0%, #dc2626 100%)';
+      const boxBg = item.healthy ? '#ecfdf5' : '#fef2f2';
+      const boxBorder = item.healthy ? '#10b981' : '#ef4444';
+      const boxTitleColor = item.healthy ? '#047857' : '#b91c1c';
+      const boxTitleIcon = item.healthy ? '✅' : '💡';
+      const boxTitleText = item.healthy ? ' Tình trạng:' : ' Cách xử lý:';
+
+      document.getElementById('diseaseName').textContent = item.disease;
+      document.getElementById('diseaseName').style.color = colorText;
+      
+      document.getElementById('confidenceText').textContent = `Độ tin cậy: ${item.conf}%`;
+      document.getElementById('confidenceBar').style.width = item.conf + '%';
+      document.getElementById('confidenceBar').textContent = item.conf + '%';
+      document.getElementById('confidenceBar').style.background = colorGradient;
+
+      if (item.treatment) {
+        document.getElementById('treatmentText').textContent = item.treatment;
+        document.getElementById('treatmentBox').style.display = 'block';
+        document.getElementById('treatmentBox').style.background = boxBg;
+        document.getElementById('treatmentBox').style.borderLeftColor = boxBorder;
+        document.getElementById('treatmentTitle').style.color = boxTitleColor;
+        document.getElementById('treatmentTitle').textContent = boxTitleIcon + boxTitleText;
+      } else {
+        document.getElementById('treatmentBox').style.display = 'none';
+      }
+
+      let html = '';
+      if (item.top3) {
+        item.top3.forEach((t, idx) => {
+          const prob = Math.round(t[1] * 100);
+          html += `
+            <div class="prediction-item">
+              <span>${idx + 1}. ${t[0]}</span>
+              <span class="prediction-percentage">${prob}%</span>
+            </div>
+          `;
+        });
+      }
+      document.getElementById('topPredictions').innerHTML = html;
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     window.addEventListener('DOMContentLoaded', renderHistory);
